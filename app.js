@@ -14,6 +14,10 @@ let config = {
     create: create,
     update: update,
   },
+  scale: {
+    mode: Phaser.Scale.FIT, // Fit the game to the container while maintaining aspect ratio
+    autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game canvas in the middle of the screen
+  },
 };
 
 let game = new Phaser.Game(config);
@@ -91,13 +95,14 @@ function create() {
     `Instructions: Press space bar to start`,
     {
       fontFamily: '"Comic Sans MS", Times, serif',
-      fontSize: "20px",
+      fontSize: "16px",
       color: "white",
       backgroundColor: "black",
+      wordWrap: { width: 450, useAdvancedWrap: true },
     }
   );
 
-  Phaser.Display.Align.In.BottomCenter(messageToPlayer, background, 0, 50);
+  Phaser.Display.Align.In.BottomCenter(messageToPlayer, background, -70, 50);
 
   this.input.on(
     "pointerdown",
