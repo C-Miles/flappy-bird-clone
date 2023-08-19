@@ -24,6 +24,14 @@ let game = new Phaser.Game(config);
 
 let isGameStarted = false;
 
+let cursors;
+let touchStart = null; // To capture the start time of a touch event
+let isTouched = false;
+
+var pete;
+let hasLanded = false;
+let hasBumped = false;
+
 let messageToPlayer;
 
 function preload() {
@@ -36,16 +44,9 @@ function preload() {
   });
 }
 
-var pete;
-let hasLanded = false;
-let hasBumped = false;
-
-let cursors;
-
-let touchStart = null; // To capture the start time of a touch event
-let isTouched = false;
-
 function create() {
+  cursors = this.input.keyboard.createCursorKeys();
+
   const background = this.add.image(0, 0, "background").setOrigin(0, 0);
   const roads = this.physics.add.staticGroup();
 
@@ -87,8 +88,6 @@ function create() {
   this.physics.add.collider(pete, topColumns);
   this.physics.add.collider(pete, bottomColumns);
 
-  cursors = this.input.keyboard.createCursorKeys();
-
   messageToPlayer = this.add.text(
     0,
     0,
@@ -125,6 +124,20 @@ function create() {
 }
 
 function update() {
+  pete.body.velocity.x = 50;
+
+  if (hasLanded || hasBumped || !isGameStarted) {
+    pete.body.velocity.x = 0;
+  }
+
+  if (!isGameStarted) {
+    pete.setVelocityY(-160);
+  }
+
+  if (cursors.space.isDown && !isGameStarted) {
+    isGameStarted = true;
+  }
+
   if (
     (cursors.up.isDown || (isTouched && touchStart)) &&
     !hasLanded &&
@@ -140,7 +153,7 @@ function update() {
   ) {
     isGameStarted = true;
     messageToPlayer.text =
-      "Instructions: Press the ^ button or touch the screen to stay upright";
+      "Instructions: Press the ^ button or touch the screen to flap upwards";
     touchStart = null; // Resetting touchStart so that the condition doesn't trigger repeatedly
   }
 
@@ -151,23 +164,5 @@ function update() {
   if (pete.x > 750) {
     pete.setVelocityY(40);
     messageToPlayer.text = `Congrats! You won!`;
-  }
-
-  pete.body.velocity.x = 50;
-
-  if (!hasLanded || !hasBumped) {
-    pete.body.velocity.x = 50;
-  }
-
-  if (hasLanded || hasBumped || !isGameStarted) {
-    pete.body.velocity.x = 0;
-  }
-
-  if (!isGameStarted) {
-    pete.setVelocityY(-160);
-  }
-
-  if (cursors.space.isDown && !isGameStarted) {
-    isGameStarted = true;
   }
 }
